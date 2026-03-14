@@ -20,15 +20,17 @@ if(!isset($_SESSION["logado"])){
 
 if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])){
 
-    $stmt = $pdo->prepare("INSERT INTO pessoas (nome, data_agendamento, horario, convenio) VALUES (?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO pessoas (nome, data_agendamento, horario, valor, convenio) VALUES (?, ?, ?, ?, ?)");
 
     if($stmt->execute([
         $_POST["nome"],
         $_POST["data_agendamento"],
         $_POST["horario"],
+        $_POST["valor"],
         $_POST["convenio"]
     ])) {
-        echo "Paciente cadastrado com sucesso!";
+        header("Location: dashboard.php?sucesso=1");
+        exit;
     }
 }
 
@@ -39,10 +41,10 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
 <div class="corpo-dash">
     <div class="cabecalho">
         <div class="cabecalho-1">
-            <h1>Pacientes</h1>
+            <h1>Agenda </h1>
         </div>
         <div class="cabecalho-2">
-            <a href="logout.php">Sair</a>
+            <a href="logout.php"><button class="btn-sair">Sair</button></a>            
         </div>    
 
     </div>
@@ -58,8 +60,13 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
 
             <div>
                 <label for="horario">Horario:</label>
-                <input type="text" name="horario" placeholder="horario" required>
-            </div>    
+                <input type="time" name="horario" placeholder="horario" required>
+            </div>  
+            
+            <div>
+                <label for="valor">Valor: </label>
+                <input type="number" name="valor" id="" step="0.01" min="0" placeholder="R$00,00">
+            </div>
 
             <div>
                 <label for="convenio">Convenio:</label>
@@ -84,8 +91,12 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
 
         
         </form>
+        <?php if(isset($_GET["sucesso"])): ?>
+            <span class="msg-sucesso">Paciente cadastrado com sucesso!</span>
 
-    
+        <?php endif; ?>
+
+        <h3>Lista de pacientes</h3>
 
 <div class="lista-pacientes">
 
@@ -93,15 +104,28 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
         <div>Nome</div>
         <div>Data</div>
         <div>Horário</div>
+        <div>Valor</div>
         <div>Convênio</div>
+        <div>Ações</div>
     </div>
 
     <?php foreach($pessoas as $pessoa): ?>
         <div class="paciente">
-            <div><?= $pessoa["nome"] ?></div>
-            <div><?= $pessoa["data_agendamento"] ?></div>
-            <div><?= $pessoa["horario"] ?></div>
-            <div><?= $pessoa["convenio"] ?></div>
+            <div><?= htmlspecialchars($pessoa["nome"]) ?></div>
+            <div><?= date("d/m/Y", strtotime($pessoa["data_agendamento"])) ?></div>
+            <div><?= htmlspecialchars($pessoa["horario"]) ?></div>
+            <div><?= number_format($pessoa["valor"],2,",",".") ?></div>
+            <div><?= htmlspecialchars($pessoa["convenio"]) ?></div>
+
+            <div class="acoes">
+                <a href="editar.php?id=<?= $pessoa["id"] ?>">
+                    <button class="btn-editar">Editar</button>
+                </a>
+
+                <a href="excluir.php?id=<?= $pessoa["id"] ?>">
+                    <button class="btn-excluir">Excluir</button>
+                </a>
+            </div>
         </div>
     <?php endforeach ?>
 
