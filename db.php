@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
-$user = "dev";
-$pass = "dev123";
+$user = "root";
+$pass = "";
 $db = "cadastro_pessoas";
 
 
