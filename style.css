@@ -158,6 +158,7 @@ h3{
 /* MOSTRAR PACIENTES */
 
 .lista-pacientes{
+    display: flex;
     width: 80%;
     margin-top: 30px;
     background: white;

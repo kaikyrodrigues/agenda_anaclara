@@ -108,7 +108,7 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
         <div>Convênio</div>
         <div>Ações</div>
     </div>
-
+            <?php $total = 0; ?>
     <?php foreach($pessoas as $pessoa): ?>
         <div class="paciente">
             <div><?= htmlspecialchars($pessoa["nome"]) ?></div>
@@ -116,7 +116,7 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
             <div><?= htmlspecialchars($pessoa["horario"]) ?></div>
             <div><?= number_format($pessoa["valor"],2,",",".") ?></div>
             <div><?= htmlspecialchars($pessoa["convenio"]) ?></div>
-
+            <?php $total += (int)$pessoa["valor"];?> 
             <div class="acoes">
                 <a href="editar.php?id=<?= $pessoa["id"] ?>">
                     <button class="btn-editar">Editar</button>
@@ -129,8 +129,9 @@ $pessoas = $pdo->query("SELECT * FROM pessoas")->fetchAll();
         </div>
     <?php endforeach ?>
 
-</div>
 
+</div>
+    <p>O TOTAL É <?= $total; ?></p>
 </div>
 
 </body>
